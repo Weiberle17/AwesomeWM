@@ -177,7 +177,7 @@ local function set_wallpaper(s)
         if type(wallpaper) == "function" then
             wallpaper = wallpaper(s)
         end
-        gears.wallpaper.maximized(wallpaper, s, true)
+        gears.wallpaper.maximized(wallpaper, s, false)
     end
 end
 
@@ -477,7 +477,9 @@ awful.rules.rules = {
     -- Spawn floating clients centered
         { rule_any = {floating = true},
             properties = {
-                placement = awful.placement.centered
+                placement = awful.placement.centered,
+                width = awful.screen.focused().workarea.width * 0.8,
+                height = awful.screen.focused().workarea.height * 0.8
             }
         },
 
