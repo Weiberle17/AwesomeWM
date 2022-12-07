@@ -125,6 +125,9 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
 
+-- Volume Widget
+local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
@@ -231,6 +234,9 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             -- mykeyboardlayout,
+            volume_widget({
+                widget_type = 'arc'
+            }),
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
