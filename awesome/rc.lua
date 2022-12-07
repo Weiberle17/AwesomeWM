@@ -204,7 +204,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
-        filter  = awful.widget.taglist.filter.all,
+        filter  = awful.widget.taglist.filter.noempty,
         buttons = taglist_buttons
     }
 
@@ -230,7 +230,7 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
+            -- mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
@@ -345,7 +345,18 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "r", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
+    -- Sound and Brightness keybinds
+    awful.key({}, "#121", function() awful.util.spawn_with_shell("amixer -q set Master toggle") end,
+      {description = "toggle mute", group = "hotkeys"}),
+    awful.key({}, "#122", function() awful.util.spawn_with_shell("amixer -q set Master 5%-") end,
+      {description = "Volume Down", group = "hotkeys"}),
+    awful.key({}, "#123", function() awful.util.spawn_with_shell("amixer -q set Master 5%+") end,
+      {description = "Volume Up", group = "hotkeys"}),
+    awful.key({}, "#232", function() awful.util.spawn_with_shell("xbacklight -dec 5") end,
+      {description = "Volume Down", group = "hotkeys"}),
+    awful.key({}, "#233", function() awful.util.spawn_with_shell("xbacklight -inc 5") end,
+      {description = "Volume Up", group = "hotkeys"})
 )
 
 clientkeys = gears.table.join(
@@ -453,6 +464,7 @@ clientbuttons = gears.table.join(
         awful.mouse.client.resize(c)
     end)
 )
+
 
 -- Set keys
 root.keys(globalkeys)
