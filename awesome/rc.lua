@@ -132,6 +132,22 @@ local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 
+-- Calender Widget
+local calender_widget = require('awesome-wm-widgets.calendar-widget.calendar')
+mytextclock = wibox.widget.textclock()
+local cw = calender_widget({
+  theme = 'nord',
+  placement = 'top_right',
+  start_sunday = 'false',
+  radius = 8,
+  previous_month_button = 4,
+  next_month_button = 5,
+})
+mytextclock:connect_signal("button::press",
+    function(_, _, _, button)
+        if button == 1 then cw.toggle() end
+    end)
+
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
