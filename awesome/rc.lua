@@ -120,7 +120,9 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
--- }}}
+
+-- Net Speed Widget
+local net_speed_widget = require('awesome-wm-widgets.net-speed-widget.net-speed')
 
 -- Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
@@ -128,7 +130,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- Volume Widget
 local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
 
--- {{{ Wibar
+-- Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 
@@ -242,6 +244,7 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
+            net_speed_widget(),
             mylauncher,
             s.mytaglist,
             s.mypromptbox,
@@ -249,6 +252,7 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
+            net_speed_widget(),
             -- mykeyboardlayout,
             volume_widget({
                 widget_type = 'arc'
