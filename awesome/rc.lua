@@ -122,20 +122,20 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 
 -- Net Speed Widget
-local net_speed_widget = require('awesome-wm-widgets.net-speed-widget.net-speed')
+local net_speed_widget = require('widgets.net-speed-widget.net-speed')
 
 -- Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- Volume Widget
-local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+local volume_widget = require('widgets.volume-widget.volume')
 
 -- Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 
 -- Calender Widget
-local calender_widget = require('awesome-wm-widgets.calendar-widget.calendar')
+local calender_widget = require('widgets.calendar-widget.calendar')
 mytextclock = wibox.widget.textclock()
 local cw = calender_widget({
   theme = 'nord',
