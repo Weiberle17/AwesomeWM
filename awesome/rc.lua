@@ -133,9 +133,6 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
--- Gaps
-beautiful.useless_gap= 5
-
 -- Autostart
 awful.spawn.with_shell("compton")
 awful.util.spawn_with_shell('xinput set-prop "$(xinput list --name-only | grep -i touch)" "libinput Tapping Enabled" 1')
