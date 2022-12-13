@@ -14,11 +14,6 @@ local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
 
--- Notification library
-local naughty = require("naughty")
-local menubar = require("menubar")
-local hotkeys_popup = require("awful.hotkeys_popup")
-
 -- Layouts, widgets and utilities
 local lain = require("lain")
 
@@ -26,22 +21,18 @@ local lain = require("lain")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 -- Load Debian menu entries
-local debian = require("debian.menu")
-local has_fdo, freedesktop = pcall(require, "freedesktop")
 local dpi = require("beautiful.xresources").apply_dpi
 
 -- Local Variable
 local terminal = "kitty"
 awful.util.terminal = terminal
-local editor = os.getenv("vim") or "nano"
-local editor_cmd = terminal .. " -e " .. editor
 local os = os
-local my_table = awful.util.table or gears.table
 
 -- Locals needed for widgets
 local wibar = {}
 wibar.dir = os.getenv("HOME") .. '/.config/awesome/config/'
 wibar.font = beautiful.font
+wibar.widget_tile = wibar.dir .. '/icons/tile.png'
 wibar.widget_ac = wibar.dir .. '/icons/ac.png'
 wibar.widget_battery = wibar.dir .. '/icons/battery.png'
 wibar.widget_battery_low = wibar.dir .. '/icons/battery_low.png'
@@ -57,13 +48,12 @@ wibar.widget_vol = wibar.dir .. '/icons/vol.png'
 wibar.widget_vol_low = wibar.dir .. '/icons/vol_low.png'
 wibar.widget_vol_no = wibar.dir .. '/icons/vol_no.png'
 wibar.widget_vol_mute = wibar.dir .. '/icons/vol_mute.png'
+wibar.widget_debian = wibar.dir .. '/icons/debian_linux_5242.png'
 
 local markup = lain.util.markup
 local separators = lain.util.separators
-local keyboardlayout = awful.widget.keyboardlayout:new()
 
 -- Textclock
-local clockicon = wibox.widget.imagebox(wibar.widget_clock)
 local clock = awful.widget.watch(
   "date +'%a %d %b %R'", 60,
   function (widget, stdout)
@@ -204,6 +194,9 @@ local net = lain.widget.net({
   end
 })
 
+-- Tile Icon
+local tileicon = wibox.widget.imagebox(wibar.widget_tile)
+
 -- Separators
 local spr = wibox.widget.textbox(' ')
 local arrl_dl = separators.arrow_left(beautiful.bg_focus .. "aa", "alpha")
@@ -298,7 +291,7 @@ s.mywibox:setup {
     clock,
     spr,
     arrl_ld,
-    wibox.container.background(s.mylayoutbox, beautiful.bg_focus .. "aa")
+    wibox.container.background(tileicon, beautiful.bg_focus .. "aa")
   }
 }
 end)
