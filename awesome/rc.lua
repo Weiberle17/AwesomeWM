@@ -15,6 +15,7 @@ local naughty = require("naughty")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
+-- Lain library
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -83,7 +84,15 @@ client.connect_signal("manage", function (c)
     awful.placement.no_offscreen(c)
   end
 end)
-
+-- Window Transparancy
+client.connect_signal("focus", function (c)
+  c.border_color = beautiful.border_focus
+  c.opacity = 0.9
+end)
+client.connect_signal("unfocus", function (c)
+  c.border_color = beautiful.border_normal
+  c.opacity = 0.9
+end)
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
   -- buttons for the titlebar

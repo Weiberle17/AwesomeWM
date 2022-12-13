@@ -7,130 +7,210 @@ pcall(require, "luarocks.loader")
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
+
 -- Widget and layout library
 local wibox = require("wibox")
+
 -- Theme handling library
 local beautiful = require("beautiful")
+
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
+
+-- Layouts, widgets and utilities
+local lain = require("lain")
+
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 -- Load Debian menu entries
 local debian = require("debian.menu")
 local has_fdo, freedesktop = pcall(require, "freedesktop")
+local dpi = require("beautiful.xresources").apply_dpi
 
 -- Local Variable
 local terminal = "kitty"
+awful.util.terminal = terminal
 local editor = os.getenv("vim") or "nano"
 local editor_cmd = terminal .. " -e " .. editor
+local os = os
+local my_table = awful.util.table or gears.table
 
--- Create a launcher widget and a main menu
-myawesomemenu = {
-  { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
-  { "manual", terminal .. " -e man awesome" },
-  { "edit config", editor_cmd .. " " .. awesome.conffile },
-  { "restart", awesome.restart },
-  { "quit", function() awesome.quit() end },
-}
+-- Locals needed for widgets
+local wibar = {}
+wibar.dir = os.getenv("HOME") .. '/.config/awesome/config/'
+wibar.font = beautiful.font
+wibar.widget_ac = wibar.dir .. '/icons/ac.png'
+wibar.widget_battery = wibar.dir .. '/icons/battery.png'
+wibar.widget_battery_low = wibar.dir .. '/icons/battery_low.png'
+wibar.widget_battery_empty = wibar.dir .. '/icons/battery_empty.png'
+wibar.widget_mem = wibar.dir .. '/icons/mem.png'
+wibar.widget_cpu = wibar.dir .. '/icons/cpu.png'
+wibar.widget_temp = wibar.dir .. '/icons/temp.png'
+wibar.widget_net = wibar.dir .. '/icons/net.png'
+wibar.widget_hdd = wibar.dir .. '/icons/hdd.png'
+wibar.widget_music = wibar.dir .. '/icons/music.png'
+wibar.widget_music_on = wibar.dir .. '/icons/music_on.png'
+wibar.widget_vol = wibar.dir .. '/icons/vol.png'
+wibar.widget_vol_low = wibar.dir .. '/icons/vol_low.png'
+wibar.widget_vol_no = wibar.dir .. '/icons/vol_no.png'
+wibar.widget_vol_mute = wibar.dir .. '/icons/vol_mute.png'
 
-local menu_awesome = { "awesome", myawesomemenu, beautiful.awesome_icon }
-local menu_terminal = { "open terminal", terminal }
+local markup = lain.util.markup
+local separators = lain.util.separators
+local keyboardlayout = awful.widget.keyboardlayout:new()
 
-if has_fdo then
-  mymainmenu = freedesktop.menu.build({
-    before = { menu_awesome },
-    after =  { menu_terminal }
-  })
-else
-  mymainmenu = awful.menu({
-    items = {
-      menu_awesome,
-      { "Debian", debian.menu.Debian_menu.Debian },
-      menu_terminal,
-    }
-  })
-end
-
-
-mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = mymainmenu })
-
--- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
-
--- Net Speed Widget
-local net_speed_widget = require('widgets.net-speed-widget.net-speed')
-
--- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
-
--- Volume Widget
-local volume_widget = require('widgets.volume-widget.volume')
-
--- Wibar
--- Create a textclock widget
-mytextclock = wibox.widget.textclock()
-
--- Calender Widget
-local calender_widget = require('widgets.calendar-widget.calendar')
-mytextclock = wibox.widget.textclock()
-local cw = calender_widget({
-  theme = 'nord',
-  placement = 'top_right',
-  start_sunday = 'false',
-  radius = 8,
-  previous_month_button = 4,
-  next_month_button = 5,
-})
-mytextclock:connect_signal("button::press",
-  function(_, _, _, button)
-    if button == 1 then cw.toggle() end
-  end)
-
--- Create a wibox for each screen and add it
-local taglist_buttons = gears.table.join(
-  awful.button({ }, 1, function(t) t:view_only() end),
-  awful.button({ modkey }, 1, function(t)
-    if client.focus then
-      client.focus:move_to_tag(t)
-    end
-  end),
-  awful.button({ }, 3, awful.tag.viewtoggle),
-  awful.button({ modkey }, 3, function(t)
-    if client.focus then
-      client.focus:toggle_tag(t)
-    end
-  end),
-  awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-  awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+-- Textclock
+local clockicon = wibox.widget.imagebox(wibar.widget_clock)
+local clock = awful.widget.watch(
+  "date +'%a %d %b %R'", 60,
+  function (widget, stdout)
+    widget:set_markup(" " .. markup.font(wibar.font, stdout))
+  end
 )
 
-local tasklist_buttons = gears.table.join(
-  awful.button({ }, 1, function (c)
-    if c == client.focus then
-      c.minimized = true
-    else
-      c:emit_signal(
-        "request::activate",
-        "tasklist",
-        {raise = true}
-      )
-    end
-  end),
-  awful.button({ }, 3, function()
-    awful.menu.client_list({ theme = { width = 250 } })
-  end),
-  awful.button({ }, 4, function ()
-    awful.client.focus.byidx(1)
-  end),
-  awful.button({ }, 5, function ()
-    awful.client.focus.byidx(-1)
-  end))
+-- Calender
+wibar.cal = lain.widget.cal({
+  attach_to = { clock },
+  icons = "",
+  week_number = "left",
+  notification_preset = {
+    font = "Hack Nerd Font 10",
+    fg = beautiful.fg_normal,
+    bg = beautiful.bg_normal
+  }
+})
 
+-- MPD
+-- local musicplr = awful.util.terminal .. " -title Music -e ncmcpp"
+-- local mpdicon = wibox.widget.imagebox(wibar.widget_music)
+-- mpdicon:buttons(my_table.join(
+--   awful.button({ "Mod 4" }, 1, function () awful.spawn(musicplr) end),
+--   awful.button({ }, 1, function ()
+--     os.execute("mpc prev")
+--     wibar.mpd.update()
+--   end),
+--   awful.button({ }, 2, function ()
+--     os.execute("mpc toggle")
+--     wibar.mpd.update()
+--   end),
+--   awful.button({ }, 3, function ()
+--     os.execute("mpc next")
+--     wibar.mpd.update()
+--   end)
+-- ))
+-- wibar.mpd = lain.widget.mpd({
+--   settings = function ()
+--     if mpd_now.state == "play" then
+--       artist = " " .. mpd_now.artist .. " "
+--       title = mpd_now.title .. " "
+--       mpdicon:set_image(wibar.widget_music_on)
+--     elseif mpd_now.state == "pause" then
+--       artist = " mpd "
+--       title = "paused "
+--     else
+--       artist = ""
+--       title = ""
+--       mpdicon:set_image(wibar.widget_music)
+--     end
+--     widget:set_markup(markup.font(wibar.font, markup("#EA6F81", artist) .. title))
+--   end
+-- })
+
+-- MEM
+local memicon = wibox.widget.imagebox(wibar.widget_mem)
+local mem = lain.widget.mem({
+  settings = function ()
+    widget:set_markup(markup.font(wibar.font, " " .. mem_now.used .. "MB "))
+  end
+})
+
+-- CPU
+local cpuicon = wibox.widget.imagebox(wibar.widget_cpu)
+local cpu = lain.widget.cpu({
+  settings = function ()
+    widget:set_markup(markup.font(wibar.font, " " .. cpu_now.usage .. "% "))
+  end
+})
+
+-- Coretemp
+local tempicon = wibox.widget.imagebox(wibar.widget_temp)
+local temp = lain.widget.temp({
+  settings = function ()
+    widget:set_markup(markup.font(wibar.font, " " .. coretemp_now .. "°C "))
+  end
+})
+
+-- Filesystem
+local fsicon = wibox.widget.imagebox(wibar.widget_hdd)
+
+-- Battery
+local baticon = wibox.widget.imagebox(wibar.widget_battery)
+local bat = lain.widget.bat({
+  settings = function ()
+    if bat_now.status and bat_now.status ~= "N/A" then
+      if bat_now.ac_status == 1 then
+        baticon:set_image(wibar.widget_ac)
+      elseif not bat_now.perc and tonumber(bat_now.perc) <= 5 then
+        baticon:set_image(wibar.widget_battery_empty)
+      elseif not bat_now.perc and tonumber(bat_now.perc) <= 15 then
+  baticon:set_image(wibar.widget_battery_low)
+else
+  baticon:set_image(wibar.widget_battery)
+end
+widget:set_markup(markup.font(wibar.font, " " .. bat_now.perc .. "% "))
+else
+      widget:set_markup(markup.font(wibar.font, " AC "))
+      baticon:set_image(wibar.widget_ac)
+    end
+  end
+})
+
+-- Alsa Volume
+local volicon = wibox.widget.imagebox(wibar.widget_vol)
+wibar.volume = lain.widget.alsa({
+  settings = function ()
+    if volume_now.status == "off" then
+      volicon:set_image(wibar.widget_vol_mute)
+    elseif tonumber(volume_now.level) == 0 then
+      volicon:set_image(wibar.widget_vol_no)
+    elseif tonumber(volume_now.level) <= 50 then
+      volicon:set_image(wibar.widget_vol_low)
+    else
+      volicon:set_image(wibar.widget_vol)
+    end
+    widget:set_markup(markup.font(wibar.font, " " .. volume_now.level .. "% "))
+  end
+})
+wibar.volume.widget:buttons(awful.util.table.join(
+  awful.button({}, 4, function ()
+    awful.util.spawn("amixer set Master 1%+")
+    wibar.volume.update()
+  end),
+  awful.button({}, 5, function ()
+    awful.util.spawn("amixer set Master 1%-")
+    wibar.volume.update()
+  end)
+))
+
+-- Network Widget
+local neticon = wibox.widget.imagebox(wibar.widget_net)
+local net = lain.widget.net({
+  settings = function ()
+    widget:set_markup(markup.font(wibar.font, markup("#7AC82E", " " .. string.format("%06.1f", net_now.received))
+      .. " " .. markup("#46A8C3", " " .. string.format("%06.1f", net_now.sent) .. " ")))
+  end
+})
+
+-- Separators
+local spr = wibox.widget.textbox(' ')
+local arrl_dl = separators.arrow_left(beautiful.bg_focus .. "aa", "alpha")
+local arrl_ld = separators.arrow_left("alpha", beautiful.bg_focus .. "aa")
+
+-- Wallpaper
 local function set_wallpaper(s)
-  -- Wallpaper
   if beautiful.wallpaper then
     local wallpaper = beautiful.wallpaper
     -- If wallpaper is a function, call it with the screen
@@ -151,57 +231,74 @@ awful.screen.connect_for_each_screen(function(s)
   -- Each screen has its own tag table.
   awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
-  -- Create a promptbox for each screen
+  -- Create promptbox for each screen
   s.mypromptbox = awful.widget.prompt()
-  -- Create an imagebox widget which will contain an icon indicating which layout we're using.
-  -- We need one layoutbox per screen.
-  s.mylayoutbox = awful.widget.layoutbox(s)
-  s.mylayoutbox:buttons(gears.table.join(
-    awful.button({ }, 1, function () awful.layout.inc( 1) end),
-    awful.button({ }, 3, function () awful.layout.inc(-1) end),
-    awful.button({ }, 4, function () awful.layout.inc( 1) end),
-    awful.button({ }, 5, function () awful.layout.inc(-1) end)))
-  -- Create a taglist widget
-  s.mytaglist = awful.widget.taglist {
-    screen  = s,
-    filter  = awful.widget.taglist.filter.noempty,
-    buttons = taglist_buttons
-  }
-
-  -- Create a tasklist widget
+  -- Create taglist widget
+  s.mytaglist = awful.widget.taglist( s,
+    awful.widget.taglist.filter.selected,
+    awful.util.taglist_buttons
+  )
+  -- Create tasklist widget
   s.mytasklist = awful.widget.tasklist {
-    screen  = s,
-    filter  = awful.widget.tasklist.filter.currenttags,
-    buttons = tasklist_buttons
-  }
-
-  -- Create the wibox
-  s.mywibox = awful.wibar({ position = "top", screen = s })
-
-  -- Add widgets to the wibox
-  s.mywibox:setup {
-    layout = wibox.layout.align.horizontal,
-    { -- Left widgets
-      layout = wibox.layout.fixed.horizontal,
-      mylauncher,
-      s.mytaglist,
-      s.mypromptbox,
+    screen = s,
+    filter = awful.widget.tasklist.filter.focused,
+    buttons = awful.util.tasklist_buttons,
+    style = {
+      border_width = dpi(2),
     },
-    s.mytasklist, -- Middle widget
-    { -- Right widgets
-      layout = wibox.layout.fixed.horizontal,
-      net_speed_widget(),
-      -- mykeyboardlayout,
-      volume_widget({
-        widget_type = 'icon-and-text-widget'
-      }),
-      volume_widget({
-        widget_type = 'arc'
-      }),
-      wibox.widget.systray(),
-      mytextclock,
-      s.mylayoutbox,
-    },
+    valign = "center",
+    halign = "center",
+    widget = wibox.container.place,
   }
+-- Create Wibox
+s.mywibox = awful.wibar({
+  position = "top",
+  screen = s,
+  height = dpi(20),
+  width = "99%",
+  opacity = 0.9;
+  border_width = dpi(5),
+  bg = beautiful.bg_normal,
+  fg = beautiful.fg_normal })
+-- Add widgets to wibox
+s.mywibox:setup {
+  layout = wibox.layout.align.horizontal,
+  { --Left widgets
+    layout = wibox.layout.fixed.horizontal,
+    s.mytaglist,
+    s.mypromptbox,
+    spr,
+  },
+  s.mytasklist,
+  {
+    layout = wibox.layout.fixed.horizontal,
+    wibox.widget.systray(),
+    spr,
+    arrl_ld,
+    wibox.container.background(memicon, beautiful.bg_focus .. "aa"),
+    wibox.container.background(mem.widget, beautiful.bg_focus .. "aa"),
+    arrl_dl,
+    volicon,
+    wibar.volume.widget,
+    arrl_ld,
+    wibox.container.background(cpuicon, beautiful.bg_focus .. "aa"),
+    wibox.container.background(cpu.widget, beautiful.bg_focus .. "aa"),
+    arrl_dl,
+    tempicon,
+    temp.widget,
+    arrl_ld,
+    wibox.container.background(fsicon, beautiful.bg_focus .. "aa"),
+    arrl_dl,
+    baticon,
+    bat.widget,
+    arrl_ld,
+    wibox.container.background(neticon, beautiful.bg_focus .. "aa"),
+    wibox.container.background(net.widget, beautiful.bg_focus .. "aa"),
+    arrl_dl,
+    clock,
+    spr,
+    arrl_ld,
+    wibox.container.background(s.mylayoutbox, beautiful.bg_focus .. "aa")
+  }
+}
 end)
--- }}}
