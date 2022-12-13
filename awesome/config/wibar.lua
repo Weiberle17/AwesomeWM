@@ -53,6 +53,9 @@ wibar.widget_debian = wibar.dir .. '/icons/debian_linux_5242.png'
 local markup = lain.util.markup
 local separators = lain.util.separators
 
+-- Debian Icon
+local debianicon = wibox.widget.imagebox(wibar.widget_debian)
+
 -- Textclock
 local clock = awful.widget.watch(
   "date +'%a %d %b %R'", 60,
@@ -146,12 +149,12 @@ local bat = lain.widget.bat({
       elseif not bat_now.perc and tonumber(bat_now.perc) <= 5 then
         baticon:set_image(wibar.widget_battery_empty)
       elseif not bat_now.perc and tonumber(bat_now.perc) <= 15 then
-  baticon:set_image(wibar.widget_battery_low)
-else
-  baticon:set_image(wibar.widget_battery)
-end
-widget:set_markup(markup.font(wibar.font, " " .. bat_now.perc .. "% "))
-else
+        baticon:set_image(wibar.widget_battery_low)
+      else
+        baticon:set_image(wibar.widget_battery)
+      end
+      widget:set_markup(markup.font(wibar.font, " " .. bat_now.perc .. "% "))
+    else
       widget:set_markup(markup.font(wibar.font, " AC "))
       baticon:set_image(wibar.widget_ac)
     end
@@ -199,6 +202,8 @@ local tileicon = wibox.widget.imagebox(wibar.widget_tile)
 
 -- Separators
 local spr = wibox.widget.textbox(' ')
+local arrr_dr = separators.arrow_right(beautiful.bg_focus, "alpha")
+local arrr_rd = separators.arrow_right("alpha", beautiful.bg_focus)
 local arrl_dl = separators.arrow_left(beautiful.bg_focus .. "aa", "alpha")
 local arrl_ld = separators.arrow_left("alpha", beautiful.bg_focus .. "aa")
 
@@ -226,11 +231,16 @@ awful.screen.connect_for_each_screen(function(s)
 
   -- Create promptbox for each screen
   s.mypromptbox = awful.widget.prompt()
+
   -- Create taglist widget
-  s.mytaglist = awful.widget.taglist( s,
-    awful.widget.taglist.filter.selected,
-    awful.util.taglist_buttons
-  )
+  s.mytaglist = awful.widget.taglist {
+    screen = s,
+    filter = awful.widget.taglist.filter.selected,
+    buttons = awful.util.taglist_buttons,
+  }
+
+  -- Taglist widget template
+
   -- Create tasklist widget
   s.mytasklist = awful.widget.tasklist {
     screen = s,
@@ -243,55 +253,65 @@ awful.screen.connect_for_each_screen(function(s)
     halign = "center",
     widget = wibox.container.place,
   }
--- Create Wibox
-s.mywibox = awful.wibar({
-  position = "top",
-  screen = s,
-  height = dpi(20),
-  width = "99%",
-  opacity = 0.9;
-  border_width = dpi(5),
-  bg = beautiful.bg_normal,
-  fg = beautiful.fg_normal })
--- Add widgets to wibox
-s.mywibox:setup {
-  layout = wibox.layout.align.horizontal,
-  { --Left widgets
-    layout = wibox.layout.fixed.horizontal,
-    s.mytaglist,
-    s.mypromptbox,
-    spr,
-  },
-  s.mytasklist,
-  {
-    layout = wibox.layout.fixed.horizontal,
-    wibox.widget.systray(),
-    spr,
-    arrl_ld,
-    wibox.container.background(memicon, beautiful.bg_focus .. "aa"),
-    wibox.container.background(mem.widget, beautiful.bg_focus .. "aa"),
-    arrl_dl,
-    volicon,
-    wibar.volume.widget,
-    arrl_ld,
-    wibox.container.background(cpuicon, beautiful.bg_focus .. "aa"),
-    wibox.container.background(cpu.widget, beautiful.bg_focus .. "aa"),
-    arrl_dl,
-    tempicon,
-    temp.widget,
-    arrl_ld,
-    wibox.container.background(fsicon, beautiful.bg_focus .. "aa"),
-    arrl_dl,
-    baticon,
-    bat.widget,
-    arrl_ld,
-    wibox.container.background(neticon, beautiful.bg_focus .. "aa"),
-    wibox.container.background(net.widget, beautiful.bg_focus .. "aa"),
-    arrl_dl,
-    clock,
-    spr,
-    arrl_ld,
-    wibox.container.background(tileicon, beautiful.bg_focus .. "aa")
+
+  -- Create Wibox
+  s.mywibox = awful.wibar({
+    position = "top",
+    screen = s,
+    height = dpi(20),
+    width = "99%",
+    opacity = 0.9;
+    border_width = dpi(5),
+    bg = beautiful.bg_normal,
+    fg = beautiful.fg_normal
+  })
+
+  -- Add widgets to wibox
+  s.mywibox:setup {
+    layout = wibox.layout.align.horizontal,
+    { --Left Widgets
+      layout = wibox.layout.fixed.horizontal,
+      debianicon,
+      arrr_rd,
+      wibox.container.background(s.mytaglist, beautiful.bg_focus .. "aa"),
+      arrr_dr,
+      -- s.mypromptbox,
+      spr,
+    },
+    { -- Middle Widgets
+      layout = wibox.layout.align.horizontal,
+      -- s.mytasklist,
+      -- debianicon,
+    },
+    {
+      layout = wibox.layout.fixed.horizontal,
+      -- wibox.widget.systray(),
+      spr,
+      arrl_ld,
+      wibox.container.background(memicon, beautiful.bg_focus .. "aa"),
+      wibox.container.background(mem.widget, beautiful.bg_focus .. "aa"),
+      arrl_dl,
+      volicon,
+      wibar.volume.widget,
+      arrl_ld,
+      wibox.container.background(cpuicon, beautiful.bg_focus .. "aa"),
+      wibox.container.background(cpu.widget, beautiful.bg_focus .. "aa"),
+      arrl_dl,
+      tempicon,
+      temp.widget,
+      arrl_ld,
+      wibox.container.background(fsicon, beautiful.bg_focus .. "aa"),
+      arrl_dl,
+      baticon,
+      bat.widget,
+      arrl_ld,
+      wibox.container.background(neticon, beautiful.bg_focus .. "aa"),
+      wibox.container.background(net.widget, beautiful.bg_focus .. "aa"),
+      arrl_dl,
+      clock,
+      spr,
+      arrl_ld,
+      wibox.container.background(tileicon, beautiful.bg_focus .. "aa")
+    }
   }
-}
 end)
