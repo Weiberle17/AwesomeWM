@@ -239,8 +239,6 @@ awful.screen.connect_for_each_screen(function(s)
     buttons = awful.util.taglist_buttons,
   }
 
-  -- Taglist widget template
-
   -- Create tasklist widget
   s.mytasklist = awful.widget.tasklist {
     screen = s,
