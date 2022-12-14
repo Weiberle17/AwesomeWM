@@ -82,6 +82,7 @@ client.connect_signal("manage", function (c)
     awful.placement.no_offscreen(c)
   end
 end)
+
 -- Window Transparancy
 client.connect_signal("focus", function (c)
   c.border_color = beautiful.border_focus
