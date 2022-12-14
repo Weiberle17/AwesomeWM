@@ -124,9 +124,9 @@ globalkeys = gears.table.join(
                   }
               end,
               {description = "lua execute prompt", group = "awesome"}),
-    -- Menubar
-    awful.key({ modkey }, "r", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"}),
+    -- Rofi
+    awful.key({ modkey }, "r", function() awful.util.spawn_with_shell('rofi -combi-modi drun,run -show combi') end,
+              {description = "Run Rofi", group = "launcher"}),
     -- Sound and Brightness keybinds
     awful.key({}, "#121", function() awful.util.spawn_with_shell("amixer -q set Master toggle") end,
       {description = "toggle mute", group = "hotkeys"}),
