@@ -67,6 +67,7 @@ awful.layout.layouts = {
 
 require "config.wibar"
 require "config.keymaps"
+require "config.rules"
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
