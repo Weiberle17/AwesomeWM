@@ -47,7 +47,14 @@ theme.titlebar_bg_normal  = "#2E3440"
 -- titlebar_[normal|focus]
 -- tooltip_[font|opacity|fg_color|bg_color|border_width|border_color]
 -- Example:
---theme.taglist_bg_focus = "#D08770"
+-- Taglist Theme
+theme.taglist_bg_focus = theme.bg_focus
+
+-- Tasklist Theme
+theme.tasklist_plain_task_name = false
+theme.tasklist_disable_task_name = false
+theme.tasklist_bg_focus = theme.bg_normal
+theme.tasklist_disable_icon = false
 -- }}}
 
 -- {{{ Widgets
@@ -84,7 +91,6 @@ theme.menu_width  = dpi(100)
 -- {{{ Misc
 theme.awesome_icon           = themes_path .. "nord/awesome-icon.png"
 theme.menu_submenu_icon      = themes_path .. "default/submenu.png"
-theme.tasklist_plain_task_name = true
 -- }}}
 
 return theme

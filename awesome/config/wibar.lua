@@ -249,16 +249,13 @@ awful.screen.connect_for_each_screen(function(s)
     style = {
       border_width = dpi(2),
     },
-    valign = "center",
-    halign = "center",
-    widget = wibox.container.place,
   }
 
   -- Create Wibox
   s.mywibox = awful.wibar({
     position = "top",
     screen = s,
-    height = dpi(20),
+    height = dpi(23),
     width = "99%",
     opacity = 0.9;
     border_width = dpi(5),
@@ -268,50 +265,55 @@ awful.screen.connect_for_each_screen(function(s)
 
   -- Add widgets to wibox
   s.mywibox:setup {
-    layout = wibox.layout.align.horizontal,
-    { --Left Widgets
-      layout = wibox.layout.fixed.horizontal,
-      debianicon,
-      arrr_rd,
-      wibox.container.background(s.mytaglist, beautiful.bg_focus .. "aa"),
-      arrr_dr,
-      -- s.mypromptbox,
-      spr,
-    },
-    { -- Middle Widgets
-      layout = wibox.layout.align.horizontal,
-      -- s.mytasklist,
-      -- debianicon,
-    },
+    layout = wibox.layout.stack,
     {
-      layout = wibox.layout.fixed.horizontal,
-      -- wibox.widget.systray(),
-      spr,
-      arrl_ld,
-      wibox.container.background(memicon, beautiful.bg_focus .. "aa"),
-      wibox.container.background(mem.widget, beautiful.bg_focus .. "aa"),
-      arrl_dl,
-      volicon,
-      wibar.volume.widget,
-      arrl_ld,
-      wibox.container.background(cpuicon, beautiful.bg_focus .. "aa"),
-      wibox.container.background(cpu.widget, beautiful.bg_focus .. "aa"),
-      arrl_dl,
-      tempicon,
-      temp.widget,
-      arrl_ld,
-      wibox.container.background(fsicon, beautiful.bg_focus .. "aa"),
-      arrl_dl,
-      baticon,
-      bat.widget,
-      arrl_ld,
-      wibox.container.background(neticon, beautiful.bg_focus .. "aa"),
-      wibox.container.background(net.widget, beautiful.bg_focus .. "aa"),
-      arrl_dl,
-      clock,
-      spr,
-      arrl_ld,
-      wibox.container.background(tileicon, beautiful.bg_focus .. "aa")
+      layout = wibox.layout.align.horizontal,
+      { --Left Widgets
+        layout = wibox.layout.fixed.horizontal,
+        debianicon,
+        arrr_rd,
+        wibox.container.background(s.mytaglist, beautiful.bg_focus .. "aa"),
+        arrr_dr,
+        -- s.mypromptbox,
+        spr,
+      },
+      nil,
+      {
+        layout = wibox.layout.fixed.horizontal,
+        -- wibox.widget.systray(),
+        spr,
+        arrl_ld,
+        wibox.container.background(memicon, beautiful.bg_focus .. "aa"),
+        wibox.container.background(mem.widget, beautiful.bg_focus .. "aa"),
+        arrl_dl,
+        volicon,
+        wibar.volume.widget,
+        arrl_ld,
+        wibox.container.background(cpuicon, beautiful.bg_focus .. "aa"),
+        wibox.container.background(cpu.widget, beautiful.bg_focus .. "aa"),
+        arrl_dl,
+        tempicon,
+        temp.widget,
+        arrl_ld,
+        wibox.container.background(fsicon, beautiful.bg_focus .. "aa"),
+        arrl_dl,
+        baticon,
+        bat.widget,
+        arrl_ld,
+        wibox.container.background(neticon, beautiful.bg_focus .. "aa"),
+        wibox.container.background(net.widget, beautiful.bg_focus .. "aa"),
+        arrl_dl,
+        clock,
+        spr,
+        arrl_ld,
+        wibox.container.background(tileicon, beautiful.bg_focus .. "aa")
+      },
+    },
+    { -- Center Widgets
+      s.mytasklist,
+      valign = "center",
+      halign = "center",
+      layout = wibox.container.place
     }
   }
 end)
