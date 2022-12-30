@@ -27,7 +27,7 @@ end
 -- Handle runtime errors after startup
 do
   local in_error = false
-  awesome.connect_signal("debug::error", function (err)
+  awesome.connect_signal("debug::error", function(err)
     -- Make sure we don't go into an endless error loop
     if in_error then return end
     in_error = true
@@ -71,32 +71,32 @@ require "config.rules"
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
-client.connect_signal("manage", function (c)
+client.connect_signal("manage", function(c)
   -- Set the windows at the slave,
   -- i.e. put it at the end of others instead of setting it master.
   if not awesome.startup then awful.client.setslave(c) end
 
   if awesome.startup
-    and not c.size_hints.user_position
-    and not c.size_hints.program_position then
+      and not c.size_hints.user_position
+      and not c.size_hints.program_position then
     -- Prevent clients from being unreachable after screen count changes.
     awful.placement.no_offscreen(c)
   end
 end)
 
 -- Window Transparancy
-client.connect_signal("focus", function (c)
+client.connect_signal("focus", function(c)
   c.border_color = beautiful.border_focus
   c.opacity = 0.9
 end)
-client.connect_signal("unfocus", function (c)
+client.connect_signal("unfocus", function(c)
   c.border_color = beautiful.border_normal
   c.opacity = 0.9
 end)
 
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
-  c:emit_signal("request::activate", "mouse_enter", {raise = false})
+  c:emit_signal("request::activate", "mouse_enter", { raise = false })
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)

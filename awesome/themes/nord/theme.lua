@@ -15,7 +15,7 @@ theme.wallpaper = themes_path .. "nord/background.jpg"
 
 -- {{{ Styles
 -- theme.font      = "sans 8"
-theme.font      = "Hack 9"
+theme.font = "Hack 9"
 
 -- {{{ Colors
 theme.fg_normal  = "#ECEFF4"
@@ -36,8 +36,8 @@ theme.border_marked = "#D08770"
 -- }}}
 
 -- {{{ Titlebars
-theme.titlebar_bg_focus   = "#3B4252"
-theme.titlebar_bg_normal  = "#2E3440"
+theme.titlebar_bg_focus  = "#3B4252"
+theme.titlebar_bg_normal = "#2E3440"
 -- }}}
 
 -- There are other variable sets
@@ -89,8 +89,8 @@ theme.menu_width  = dpi(100)
 -- }}}
 
 -- {{{ Misc
-theme.awesome_icon           = themes_path .. "nord/awesome-icon.png"
-theme.menu_submenu_icon      = themes_path .. "default/submenu.png"
+theme.awesome_icon      = themes_path .. "nord/awesome-icon.png"
+theme.menu_submenu_icon = themes_path .. "default/submenu.png"
 -- }}}
 
 return theme

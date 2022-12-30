@@ -59,7 +59,7 @@ local debianicon = wibox.widget.imagebox(wibar.widget_debian)
 -- Textclock
 local clock = awful.widget.watch(
   "date +'%a %d %b %R'", 60,
-  function (widget, stdout)
+  function(widget, stdout)
     widget:set_markup(" " .. markup.font(wibar.font, stdout))
   end
 )
@@ -115,7 +115,7 @@ wibar.cal = lain.widget.cal({
 -- MEM
 local memicon = wibox.widget.imagebox(wibar.widget_mem)
 local mem = lain.widget.mem({
-  settings = function ()
+  settings = function()
     widget:set_markup(markup.font(wibar.font, " " .. mem_now.used .. "MB "))
   end
 })
@@ -123,7 +123,7 @@ local mem = lain.widget.mem({
 -- CPU
 local cpuicon = wibox.widget.imagebox(wibar.widget_cpu)
 local cpu = lain.widget.cpu({
-  settings = function ()
+  settings = function()
     widget:set_markup(markup.font(wibar.font, " " .. cpu_now.usage .. "% "))
   end
 })
@@ -131,7 +131,7 @@ local cpu = lain.widget.cpu({
 -- Coretemp
 local tempicon = wibox.widget.imagebox(wibar.widget_temp)
 local temp = lain.widget.temp({
-  settings = function ()
+  settings = function()
     widget:set_markup(markup.font(wibar.font, " " .. coretemp_now .. "°C "))
   end
 })
@@ -142,7 +142,7 @@ local fsicon = wibox.widget.imagebox(wibar.widget_hdd)
 -- Battery
 local baticon = wibox.widget.imagebox(wibar.widget_battery)
 local bat = lain.widget.bat({
-  settings = function ()
+  settings = function()
     if bat_now.status and bat_now.status ~= "N/A" then
       if bat_now.ac_status == 1 then
         baticon:set_image(wibar.widget_ac)
@@ -164,7 +164,7 @@ local bat = lain.widget.bat({
 -- Alsa Volume
 local volicon = wibox.widget.imagebox(wibar.widget_vol)
 wibar.volume = lain.widget.alsa({
-  settings = function ()
+  settings = function()
     if volume_now.status == "off" then
       volicon:set_image(wibar.widget_vol_mute)
     elseif tonumber(volume_now.level) == 0 then
@@ -178,11 +178,11 @@ wibar.volume = lain.widget.alsa({
   end
 })
 wibar.volume.widget:buttons(awful.util.table.join(
-  awful.button({}, 4, function ()
+  awful.button({}, 4, function()
     awful.util.spawn("amixer set Master 1%+")
     wibar.volume.update()
   end),
-  awful.button({}, 5, function ()
+  awful.button({}, 5, function()
     awful.util.spawn("amixer set Master 1%-")
     wibar.volume.update()
   end)
@@ -191,7 +191,7 @@ wibar.volume.widget:buttons(awful.util.table.join(
 -- Network Widget
 local neticon = wibox.widget.imagebox(wibar.widget_net)
 local net = lain.widget.net({
-  settings = function ()
+  settings = function()
     widget:set_markup(markup.font(wibar.font, markup("#7AC82E", " " .. string.format("%06.1f", net_now.received))
       .. " " .. markup("#46A8C3", " " .. string.format("%06.1f", net_now.sent) .. " ")))
   end

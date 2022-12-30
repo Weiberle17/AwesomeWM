@@ -16,7 +16,7 @@ require("awful.hotkeys_popup.keys")
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
   -- All clients will match this rule.
-  { rule = { },
+  { rule = {},
     properties = { border_width = beautiful.border_width,
       border_color = beautiful.border_normal,
       focus = awful.client.focus.filter,
@@ -24,12 +24,12 @@ awful.rules.rules = {
       keys = clientkeys,
       buttons = clientbuttons,
       screen = awful.screen.preferred,
-      placement = awful.placement.no_overlap+awful.placement.no_offscreen
+      placement = awful.placement.no_overlap + awful.placement.no_offscreen
     }
   },
 
   -- Spawn floating clients centered
-  { rule_any = {floating = true},
+  { rule_any = { floating = true },
     properties = {
       placement = awful.placement.centered,
       width = awful.screen.focused().workarea.width * 0.8,
