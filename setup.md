@@ -25,10 +25,8 @@ sudo snap install starship
 (requires reboot to work properly)
 ln -s ~/git/Misc/Linux/starship.toml ~/.config/starship.toml
 ## Nvim setup
-curl -LO https://github.com/neovim/neovim/releases/download/v0.8.0/nvim.appimage
-mv nvim.appimage nvim
-chmod u+x nvim
-sudo mv nvim /usr/local/bin
+Download nvim-linux54.deb
+sudo apt install ./nvim-linux64.deb
 gh repo clone Weiberle17/nvim.conf
 ln -s ~/git/nvim.conf/nvim ~/.config/nvim
 sudo apt install gcc g++
